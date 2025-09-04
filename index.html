@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="现代化的待办事项管理应用，支持优先级、截止日期和拖拽排序">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="待办清单">
+    
+    <title>待办清单 - Todo List</title>
+    
+    <!-- PWA 支持 -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 基础图标样式，避免依赖外部字体 */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 0;
+            stroke: currentColor;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <h1><span style="color: #3b82f6;">📋</span> 我的任务清单</h1>
+                <div class="header-stats">
+                    <span class="stat-item">
+                        <span style="color: #10b981;">✅</span>
+                        <span id="completed-count">0</span> 已完成
+                    </span>
+                    <span class="stat-item">
+                        <span style="color: #f59e0b;">⏰</span>
+                        <span id="pending-count">0</span> 待处理
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div class="input-section">
+                <form id="todo-form" class="todo-form">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="todo-input" 
+                            class="todo-input" 
+                            placeholder="添加新任务..." 
+                            maxlength="100"
+                            required
+                        >
+                        <button type="submit" class="add-btn">
+                            <span>➕</span>
+                            <span>添加</span>
+                        </button>
+                    </div>
+                    <div class="input-options">
+                        <select id="priority-select" class="priority-select">
+                            <option value="low">🔵 低优先级</option>
+                            <option value="medium" selected>🟡 中优先级</option>
+                            <option value="high">🔴 高优先级</option>
+                        </select>
+                        <input type="date" id="due-date" class="due-date-input" title="截止日期">
+                    </div>
+                </form>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">📊 全部</button>
+                    <button class="filter-tab" data-filter="pending">⏳ 待处理</button>
+                    <button class="filter-tab" data-filter="completed">✅ 已完成</button>
+                </div>
+                <button class="clear-completed-btn" id="clear-completed">
+                    <span>🗑️</span>
+                    清除已完成
+                </button>
+            </div>
+
+            <div class="todo-list-container">
+                <ul id="todo-list" class="todo-list">
+                    <!-- 任务项目将通过 JavaScript 动态添加 -->
+                </ul>
+                <div id="empty-state" class="empty-state">
+                    <div style="font-size: 4rem; margin-bottom: 16px;">📋</div>
+                    <h3>暂无任务</h3>
+                    <p>添加您的第一个任务开始管理吧！</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>💡 双击任务可编辑 | 拖拽可重新排序</p>
+                <div class="theme-toggle">
+                    <button id="theme-toggle" class="theme-btn" title="切换主题">
+                        <span id="theme-icon">🌙</span>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 编辑模态框 -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" style="cursor: pointer; float: right; font-size: 24px;">&times;</span>
+            <h3>✏️ 编辑任务</h3>
+            <input type="text" id="edit-input" class="edit-input" maxlength="100" placeholder="任务内容">
+            <div class="edit-options">
+                <select id="edit-priority" class="priority-select">
+                    <option value="low">🔵 低优先级</option>
+                    <option value="medium">🟡 中优先级</option>
+                    <option value="high">🔴 高优先级</option>
+                </select>
+                <input type="date" id="edit-due-date" class="due-date-input" title="截止日期">
+            </div>
+            <div class="modal-buttons">
+                <button id="save-edit" class="save-btn">💾 保存</button>
+                <button id="cancel-edit" class="cancel-btn">❌ 取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
