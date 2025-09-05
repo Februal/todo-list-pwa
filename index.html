@@ -133,5 +133,20 @@
     </div>
 
     <script src="script.js"></script>
+    
+    <!-- Service Worker 注册 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker 注册成功: ', registration);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker 注册失败: ', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
