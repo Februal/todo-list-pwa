@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建PWA PNG图标</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .icon-preview {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        .icon-preview img {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .download-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 创建PWA PNG图标</h1>
+        <p>点击按钮生成所有需要的PNG格式图标：</p>
+        
+        <button onclick="createAllIcons()">生成所有图标</button>
+        <button onclick="downloadAllIcons()">下载所有图标</button>
+        
+        <div id="preview"></div>
+        
+        <div class="download-section">
+            <h3>📱 图标规格</h3>
+            <ul>
+                <li>512x512 PNG - PWA Builder必需</li>
+                <li>192x192 PNG - 主屏幕图标</li>
+                <li>144x144 PNG - 中等尺寸</li>
+                <li>96x96 PNG - 小尺寸</li>
+                <li>72x72 PNG - 超小尺寸</li>
+                <li>48x48 PNG - 最小尺寸</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function createIcon(size) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = size;
+            canvas.height = size;
+            
+            // 背景色 #2563eb
+            ctx.fillStyle = '#2563eb';
+            
+            // 绘制圆角矩形背景
+            const radius = size / 8;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 绘制圆点图案
+            ctx.fillStyle = 'white';
+            const spacing = size / 4;
+            const dotRadius = size / 16;
+            
+            for (let i = 1; i <= 3; i++) {
+                for (let j = 1; j <= 3; j++) {
+                    const x = i * spacing;
+                    const y = j * spacing;
+                    ctx.beginPath();
+                    ctx.arc(x, y, dotRadius, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+            
+            return canvas;
+        }
+
+        function createAllIcons() {
+            const sizes = [512, 192, 144, 96, 72, 48];
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            
+            sizes.forEach(size => {
+                const canvas = createIcon(size);
+                const div = document.createElement('div');
+                div.className = 'icon-preview';
+                div.innerHTML = `
+                    <img src="${canvas.toDataURL('image/png')}" width="100" height="100" style="width: ${Math.min(size/2, 100)}px; height: ${Math.min(size/2, 100)}px;">
+                    <br>
+                    <small>${size}x${size}</small>
+                `;
+                preview.appendChild(div);
+            });
+            
+            console.log('✅ 所有图标已生成！');
+        }
+
+        function downloadAllIcons() {
+            const sizes = [512, 192, 144, 96, 72, 48];
+            
+            sizes.forEach(size => {
+                const canvas = createIcon(size);
+                const link = document.createElement('a');
+                link.download = `icon-${size}x${size}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            // 创建zip包提示
+            alert('📱 所有PNG图标已下载！\n\n请将下载的文件放入 icons/ 文件夹，然后：\n1. 更新manifest.json中的图标路径\n2. 重新上传到GitHub\n3. 再次使用PWA Builder');
+        }
+
+        // 页面加载时自动创建512图标
+        window.onload = function() {
+            createAllIcons();
+        };
+    </script>
+</body>
+</html>
